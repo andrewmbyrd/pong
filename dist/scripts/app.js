@@ -16,6 +16,7 @@
         $stateProvider
              .state('play', {
                  url: '/play',
+                 controller: 'gameCtrl as game',
                  templateUrl: '/templates/pong_table.html'
         });
         
