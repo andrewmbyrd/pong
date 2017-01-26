@@ -58,8 +58,8 @@ function Table(){
 }
 
 var table = new Table;
-table.draw();
 
+table.draw();
 
 function Player(x,y, isHuman){
 
@@ -83,35 +83,15 @@ function Player(x,y, isHuman){
         
         if(code == 119 || code == 87 || code == 38){
             if(this.y > 10 + this.speed){
-                var context = canvas.getContext("2d");
-                
-                this.y -= this.speed;
-                context.beginPath();
-                context.strokeStyle = "#000";
-                context.moveTo(this.x, this.y -this.speed*2);
-                context.lineTo(this.x, this.y + this.height + this.speed*2);
-                context.lineWidth = 10;
-                context.closePath();
-                context.stroke();
-                
-                
+                this.y -= this.speed;    
             }
         }else if(code == 115 || code == 83 || code == 40){
-            if(this.y + this.height< canvas.height - 10 - this.speed){
-                var context = canvas.getContext("2d");
-                
-                this.y += this.speed;
-                context.beginPath();
-                context.strokeStyle = "#000";
-                context.moveTo(this.x, this.y - this.speed*2);
-                context.lineTo(this.x, this.y + this.height + this.speed*2);
-                context.lineWidth = 10;
-                context.closePath();
-                context.stroke();
+            if(this.y + this.height< canvas.height - 10 - this.speed){  
+                this.y += this.speed;  
             }
         }
         
-        animate(step);
+        this.render();
     };
 
     this.render = function(){
@@ -147,11 +127,29 @@ function Ball(x_pos, y_pos){
     this.x = x_pos;
     this.y = y_pos;
     this.radius = 5;
+    this.speed = 4;
+    
+    var pi = Math.PI;
+    //gives a direction in radians. 0 degrees is east, 90 degrees is north
+    this.direction = Math.random()*(7*pi/6-5*pi/6) + 5*pi/6; 
 
-    this.move = function(){
-        //to be implemented
+   
+    
+    this.move = function(code){
+        
+        console.log(this.direction*180/pi);
+        
+        var canvas = document.getElementById("table");
+        var context = canvas.getContext("2d");
+        
+        this.x += Math.cos(this.direction) * this.speed;
+        this.y -= Math.sin(this.direction) * this.speed;
+        
+        
+        
     };
-
+    
+   
     this.render = function(){
         var canvas = document.getElementById("table");
         var context = canvas.getContext("2d");
@@ -170,32 +168,38 @@ var ball = new Ball(table.width/2, table.height/2);
 
 
 var render = function(){
-    player1.render();
-    computer.render();
-    ball.render();
-}
-
-
-
-var animate = window.requestAnimationFrame;
-var step = function(timestamp){
+    
+    table.draw();
     player1.render();
     computer.render();
     ball.render();
     
-    if(false){
+}
+
+var animate = window.requestAnimationFrame;
+
+var step = function(timestamp){
+    
+    render();
+    ball.move();
     animate(step);
-    }
+    
 };
 
 
 
 
-window.addEventListener("keypress", function(event){
+window.addEventListener("keydown", function(event){
     player1.move(event.keyCode);
+});
+
+window.addEventListener("keypress", function(event){
+    if(event.keyCode == 32){
+        step();
+    }
 });
 
 
 
-window.onload = step;  
+window.onload = render;  
    
