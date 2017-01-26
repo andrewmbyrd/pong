@@ -1,9 +1,11 @@
+var canvas = document.getElementById("table");
+var context = canvas.getContext("2d");
+
 function Table(){
 
     this.draw = function(){
         //get the canvas
-        var canvas = document.getElementById("table");
-        var context = canvas.getContext("2d");
+        
 
         this.width = canvas.width;
         this.height = canvas.height;
@@ -59,7 +61,7 @@ function Table(){
 
 var table = new Table;
 
-table.draw();
+
 
 function Player(x,y, isHuman){
 
@@ -119,7 +121,7 @@ function Player(x,y, isHuman){
 }
 
 var player1 = new Player(25, 300, true);
-var computer = new Player(table.width - 25, 300, false);
+var player2 = new Player(canvas.width - 25, 300, false);
 
 function Ball(x_pos, y_pos){
 
@@ -145,10 +147,41 @@ function Ball(x_pos, y_pos){
         this.x += Math.cos(this.direction) * this.speed;
         this.y -= Math.sin(this.direction) * this.speed;
         
-        
+        this.detectCollision();
         
     };
     
+    
+    this.detectCollision = function(){
+        
+        var leftEdge = this.x - this.radius;
+        var rightEdge = this.x + this.radius;
+        var top = this.y - this.radius;
+        var bottom = this.y + this.radius;
+        //detect collision with player 1 paddle
+        if(leftEdge < 35 && leftEdge > 0 ){
+            if (player1.y <= this.y && player1.y+player1.height >= this.y){
+                this.direction = pi - this.direction;
+            }
+        }
+        
+        //detect collision with second player paddle
+        if(rightEdge > canvas.width - 35  && rightEdge < canvas.width){
+            if (player2.y <= this.y && player2.y+player2.height >= this.y){
+                this.direction = pi - this.direction;
+            }
+        }
+        
+        //detect collision with top of table
+        if(top < 15){
+            this.direction *= -1;
+        }
+        
+        //detect collision with bottom of table
+        if(bottom > canvas.height - 15){
+            this.direction *= -1;
+        }
+    }
    
     this.render = function(){
         var canvas = document.getElementById("table");
@@ -164,14 +197,14 @@ function Ball(x_pos, y_pos){
     
 }
 
-var ball = new Ball(table.width/2, table.height/2);
+var ball = new Ball(canvas.width/2, canvas.height/2);
 
 
 var render = function(){
     
     table.draw();
     player1.render();
-    computer.render();
+    player2.render();
     ball.render();
     
 }
@@ -191,6 +224,10 @@ var step = function(timestamp){
 
 window.addEventListener("keydown", function(event){
     player1.move(event.keyCode);
+});
+
+window.addEventListener("keydown", function(event){
+    player2.move(event.keyCode);
 });
 
 window.addEventListener("keypress", function(event){
