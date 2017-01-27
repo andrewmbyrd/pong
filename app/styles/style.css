@@ -1,6 +1,8 @@
 body{
     background-color: darkslategrey;
     border-color: darskslategrey;
+    font-family: 'VT323';
+    font-size: 2.5em;
 }
 
 .center{
@@ -8,15 +10,37 @@ body{
     margin: 0 auto;
 }
 
-.options{
-    width: 80%;
+.players p{
+    display: inline;
+    margin: 0 20px;
+}
+
+.controls p{
+   width: 50%;
+   float: left;
+}
+
+table{
+    width: 60%;
+}
+tr{
+    width: 33%;
+}
+
+th{
+    border: 2px solid black;
 }
 
 td{
-    width: 50%;
+    border: 1px solid black;
+    margin: 0 auto;
+    
 }
-td.config{
-    width: 100%;
+
+td div{
+    width: 30%;
+    height: 20px;
+    margin: 9px auto;
 }
 #table{
     display: none;
