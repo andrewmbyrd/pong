@@ -1,6 +1,12 @@
 var canvas = document.getElementById("table");
 var context = canvas.getContext("2d");
 
+
+WebFont.load({
+   google: {
+       families: ['VT323']
+   } 
+});
 function Table(){
 
     this.draw = function(){
@@ -66,6 +72,10 @@ var p2Score = 0;
 
 var hits = 0;
 
+ 
+
+
+
 function Player(x,y, speed, isHuman){
 
     
@@ -122,19 +132,19 @@ function Player(x,y, speed, isHuman){
     this.defend = function(){
         
         if(this.x - ball.x < 200){
-            if ((ball.y - 80 > this.y + this.height/2) && (this.y + this.height< canvas.height - 10 - this.speed)){
+            if ((ball.y - 50 > this.y + this.height/2) && (this.y + this.height< canvas.height - 10 - this.speed)){
                 this.y += this.speed;
             }
 
-            if(( ball.y + 80 < this.y + this.height/2) && (this.y > 10 + this.speed)){
+            if(( ball.y + 50 < this.y + this.height/2) && (this.y > 10 + this.speed)){
                 this.y -= this.speed;    
             }
         }else{
-            if ((ball.y - 300 > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
+            if ((ball.y - 200 > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
                 this.y += this.speed;
             }
 
-            if(( ball.y + 300 < this.y + this.height/2) && (this.y > 10 + this.speed)){
+            if(( ball.y + 150 < this.y + this.height/2) && (this.y > 10 + this.speed)){
                 this.y -= this.speed;    
             }
         }
@@ -143,7 +153,7 @@ function Player(x,y, speed, isHuman){
 }
 
 var player1 = new Player(25, 300, 20, true);
-var player2 = new Player(canvas.width - 25, 300, 15, false);
+var player2 = new Player(canvas.width - 25, 300, 4, false);
 
 function Ball(x_pos, y_pos){
 
@@ -169,9 +179,9 @@ function Ball(x_pos, y_pos){
         var context = canvas.getContext("2d");
         
         //if the ball is nowhwere near the paddles, then move normally
-        if(this.x + Math.cos(this.direction) * this.speed > 36 && this.x + Math.cos(this.direction) * this.speed < canvas.width - 36 ){
+       // if(this.x + Math.cos(this.direction) * this.speed > 36 && this.x + Math.cos(this.direction) * this.speed //< canvas.width - 36 ){
             this.x += Math.cos(this.direction) * this.speed;
-        }else{
+       /* }else{
             
             //if moving the ball would put it to the left of the left paddle,
             //AND the left paddle is covering it from going out of bounds
@@ -188,7 +198,7 @@ function Ball(x_pos, y_pos){
             }
             
         }
-        
+        */
         this.y -= Math.sin(this.direction) * this.speed;
         
         this.detectCollision();
@@ -222,6 +232,11 @@ function Ball(x_pos, y_pos){
                 upOrDown *= -1;
             this.direction = Math.random()*(pi/6)*upOrDown;
         }
+        
+        
+        context.font = 'bold 50pt VT323'
+        context.fillText(String(p1Score), canvas.width/4, 100);
+        context.fillText(String(p2Score), canvas.width*3/4, 100);
     };
     
     
@@ -233,7 +248,7 @@ function Ball(x_pos, y_pos){
         var bottom = this.y + this.radius;
         //detect collision with player 1 paddle
         if(leftEdge < 35 && leftEdge > 0 ){
-            if (player1.y <= this.y && player1.y+player1.height >= this.y){
+            if (player1.y <= this.y + this.radius && player1.y+player1.height >= this.y - this.radius){
                 this.direction = pi - this.direction;
                 hits++;
                 console.log("left score: " +p1Score);
@@ -245,7 +260,7 @@ function Ball(x_pos, y_pos){
         
         //detect collision with second player paddle
         if(rightEdge > canvas.width - 35  && rightEdge < canvas.width){
-            if (player2.y <= this.y && player2.y+player2.height >= this.y){
+            if (player2.y <= this.y + this.radius && player2.y+player2.height >= this.y - this.radius){
                 this.direction = pi - this.direction;
                 hits++;
             }
@@ -286,9 +301,13 @@ var render = function(){
     player2.render();
     ball.render();
     
+    
 };
 
 var animate = window.requestAnimationFrame;
+
+//this variable just for development tracking
+var animationID;
 
 var step = function(timestamp){
     
@@ -298,7 +317,9 @@ var step = function(timestamp){
     if(!player2.isHuman && Math.cos(ball.direction) >0 && ball.x > canvas.width/2){
         player2.defend();
     }
-    animate(step);
+    if(ball.canMove)
+        animationID = animate(step);
+    console.log("animate: " +animationID);
     
 };
 
@@ -319,8 +340,8 @@ window.addEventListener("keydown", function(event){
 
 window.addEventListener("keypress", function(event){
     if(event.keyCode == 32){
-        step();
         ball.canMove = true;
+        step();
         ball.speed = ball.startSpeed;
     }
 });
