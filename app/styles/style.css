@@ -1,7 +1,23 @@
-#table{
-    background-color: #000;
+body{
+    background-color: darkslategrey;
+    border-color: darskslategrey;
 }
 
-{
+.center{
+    text-align: center;
+    margin: 0 auto;
+}
+
+.options{
+    width: 80%;
+}
+
+td{
+    width: 50%;
+}
+td.config{
+    width: 100%;
+}
+#table{
     display: none;
 }

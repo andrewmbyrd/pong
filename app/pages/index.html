@@ -3,14 +3,23 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title>Blong</title>
-    <link rel="stylesheet" type="text/css"  href="/app/styles/style.css">
+    <link rel="stylesheet" type="text/css" href="/app/styles/style.css">
 </head>
 <body>
-    <h2 class="hidden">no score</h2>
-    <canvas id="table" width="1550" height="930"</canvas>
-    
-    <h2 id="P1Score">0</h2>
-    <h2 id="P2Score">0</h2>
+    <h1 class="home center">Welcome to Pong!</h2>
+    <section class="home center">
+        <div class="players">
+            <h3> Select Your Play Mode</h3>
+            <p id="1player"> 1 Player</p>
+            <p id="2player"> 2 Player</p>
+        </div>
+        <div class="controls">
+            <h3>Select Your Control Scheme</h3>
+        </div>
+    </section>
+    <div class="game center">
+        <canvas id="table" width="1550" height="930"</canvas>
+    </div>
     
     <script src= "https://cdnjs.cloudflare.com/ajax/libs/buzz/1.1.10/buzz.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
