@@ -59,18 +59,21 @@ function Table(){
 
 }
 
-var table = new Table;
+var table = new Table();
 
+var p1Score = 0;
+var p2Score = 0;
 
+var hits = 0;
 
-function Player(x,y, isHuman){
+function Player(x,y, speed, isHuman){
 
     
     var canvas = document.getElementById("table");
 
     this.x = x;
     this.y = y;
-    this.speed = 20;
+    this.speed = speed;
     this.isHuman = isHuman;
 
 
@@ -115,13 +118,32 @@ function Player(x,y, isHuman){
         context.stroke();
 
     };
+    
+    this.defend = function(){
+        
+        if(this.x - ball.x < 200){
+            if ((ball.y - 80 > this.y + this.height/2) && (this.y + this.height< canvas.height - 10 - this.speed)){
+                this.y += this.speed;
+            }
 
-   
+            if(( ball.y + 80 < this.y + this.height/2) && (this.y > 10 + this.speed)){
+                this.y -= this.speed;    
+            }
+        }else{
+            if ((ball.y - 300 > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
+                this.y += this.speed;
+            }
+
+            if(( ball.y + 300 < this.y + this.height/2) && (this.y > 10 + this.speed)){
+                this.y -= this.speed;    
+            }
+        }
+    };
 
 }
 
-var player1 = new Player(25, 300, true);
-var player2 = new Player(canvas.width - 25, 300, false);
+var player1 = new Player(25, 300, 20, true);
+var player2 = new Player(canvas.width - 25, 300, 15, false);
 
 function Ball(x_pos, y_pos){
 
@@ -129,7 +151,9 @@ function Ball(x_pos, y_pos){
     this.x = x_pos;
     this.y = y_pos;
     this.radius = 5;
-    this.speed = 4;
+    this.startSpeed = 4;
+    this.speed = this.startSpeed;
+    this.canMove = false;
     
     var pi = Math.PI;
     //gives a direction in radians. 0 degrees is east, 90 degrees is north
@@ -139,16 +163,65 @@ function Ball(x_pos, y_pos){
     
     this.move = function(code){
         
-        console.log(this.direction*180/pi);
+        
         
         var canvas = document.getElementById("table");
         var context = canvas.getContext("2d");
         
-        this.x += Math.cos(this.direction) * this.speed;
+        //if the ball is nowhwere near the paddles, then move normally
+        if(this.x + Math.cos(this.direction) * this.speed > 36 && this.x + Math.cos(this.direction) * this.speed < canvas.width - 36 ){
+            this.x += Math.cos(this.direction) * this.speed;
+        }else{
+            
+            //if moving the ball would put it to the left of the left paddle,
+            //AND the left paddle is covering it from going out of bounds
+            //put it directly on the left paddle instead
+            if((this.x + Math.cos(this.direction) * this.speed < this.x) && this.y> player1.y && this.y < player1.y+player1.height){
+                this.x = 35;
+            
+            //if moving it would put it to the right of the right paddle,
+            //put it right on the right paddle instead
+            }else if((this.x + Math.cos(this.direction) * this.speed > this.x) && this.y> player2.y && this.y < player2.y + player2.height){
+                this.x = canvas.width - 35;
+            }else{
+                this.x += Math.cos(this.direction) * this.speed;
+            }
+            
+        }
+        
         this.y -= Math.sin(this.direction) * this.speed;
         
         this.detectCollision();
         
+        if(this.x < 2){
+            p2Score++;
+            this.reset(2);
+        }
+        
+        if(this.x > canvas.width -2){
+            p1Score++;
+            this.reset(1);
+        }
+        
+        
+    };
+    
+    
+    this.reset = function(scoringPlayer){
+        this.speed = 0;
+        this.canMove = false;
+        this.x = canvas.width/2;
+        this.y = canvas.height/2;
+        
+        if(scoringPlayer == 1){
+            this.direction = Math.random()*(7*pi/6-5*pi/6) + 5*pi/6;
+        }else{
+            var angle = Math.random();
+            var upOrDown = 1;
+            if(angle < 0.5)
+                upOrDown *= -1;
+            this.direction = Math.random()*(pi/6)*upOrDown;
+        }
     };
     
     
@@ -162,6 +235,11 @@ function Ball(x_pos, y_pos){
         if(leftEdge < 35 && leftEdge > 0 ){
             if (player1.y <= this.y && player1.y+player1.height >= this.y){
                 this.direction = pi - this.direction;
+                hits++;
+                console.log("left score: " +p1Score);
+                console.log("right score: " +p2Score);
+                console.log("hits: " +hits);
+                console.log("speed " + this.speed);
             }
         }
         
@@ -169,6 +247,7 @@ function Ball(x_pos, y_pos){
         if(rightEdge > canvas.width - 35  && rightEdge < canvas.width){
             if (player2.y <= this.y && player2.y+player2.height >= this.y){
                 this.direction = pi - this.direction;
+                hits++;
             }
         }
         
@@ -181,7 +260,7 @@ function Ball(x_pos, y_pos){
         if(bottom > canvas.height - 15){
             this.direction *= -1;
         }
-    }
+    };
    
     this.render = function(){
         var canvas = document.getElementById("table");
@@ -207,14 +286,18 @@ var render = function(){
     player2.render();
     ball.render();
     
-}
+};
 
 var animate = window.requestAnimationFrame;
 
 var step = function(timestamp){
     
     render();
-    ball.move();
+    if(ball.canMove)
+        ball.move();
+    if(!player2.isHuman && Math.cos(ball.direction) >0 && ball.x > canvas.width/2){
+        player2.defend();
+    }
     animate(step);
     
 };
@@ -223,16 +306,22 @@ var step = function(timestamp){
 
 
 window.addEventListener("keydown", function(event){
-    player1.move(event.keyCode);
+    if(event.keyCode == 87  || event.keyCode == 119 || event.keyCode == 115 || event.keyCode == 83)
+        player1.move(event.keyCode);
 });
 
 window.addEventListener("keydown", function(event){
-    player2.move(event.keyCode);
+    
+    if(event.keyCode == 38 || event.keyCode == 40)    
+        player2.move(event.keyCode);
 });
+
 
 window.addEventListener("keypress", function(event){
     if(event.keyCode == 32){
         step();
+        ball.canMove = true;
+        ball.speed = ball.startSpeed;
     }
 });
 
