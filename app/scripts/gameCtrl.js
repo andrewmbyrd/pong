@@ -153,7 +153,7 @@ function Player(x,y, speed, isHuman){
 }
 
 var player1 = new Player(25, 300, 20, true);
-var player2 = new Player(canvas.width - 25, 300, 4, false);
+var player2 = new Player(canvas.width - 25, 300, 4, true);
 
 function Ball(x_pos, y_pos){
 
@@ -237,6 +237,31 @@ function Ball(x_pos, y_pos){
         context.font = 'bold 50pt VT323'
         context.fillText(String(p1Score), canvas.width/4, 100);
         context.fillText(String(p2Score), canvas.width*3/4, 100);
+        
+        if(p1Score > 10 || p2Score > 10){
+            this.endGame(scoringPlayer);
+        }
+    };
+    
+    this.endGame = function(player){
+        var congrats;
+        var spacer = 100;
+        if(player == 1){
+            congrats = "Player 1 Wins!";
+        }else if(player2.isHuman){
+            congrats = "Player 2 Wins!";
+        }else{
+            congrats = "The computer won!! :O :(";
+            spacer = 0;
+        }
+        
+        context.fillText(congrats, canvas.width/3 + spacer, canvas.height/2);
+        context.font = 'normal 30pt VT323';
+        context.fillText("Press space to go ahead and run the game back again.", canvas.width/4, canvas.height/2 + 100);
+        context.fillText("Reload this page to select new game options!", canvas.width/4 + 80, canvas.height/2+175);
+        
+        p1Score = 0;
+        p2Score = 0;
     };
     
     
