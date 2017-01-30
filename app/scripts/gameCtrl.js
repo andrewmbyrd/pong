@@ -409,7 +409,6 @@ var p1RevealStart = function(){
     $(".color1").css("border", "none");
     $(this).css("border", "2px dashed orange");
     if(color1Selected && color2Selected){
-        $(".colors").css("display", "none");
         $(".begin").css("display", "block");
     }
 };
@@ -420,8 +419,7 @@ var p2RevealStart = function(){
     console.log($(this.id)["selector"]);
     $(".color2").css("border", "none");
     $(this).css("border", "2px dashed orange");
-    if(color1Selected && color2Selected){
-        $(".colors").css("display", "none");
+    if(color1Selected && color2Selected){ 
         $(".begin").css("display", "block");
     }
 };
@@ -431,6 +429,7 @@ var showTable = function(){
     $(".begin").css("display", "none");
     $("#table").css("display", "block");
     $("h1").css("display", "none");
+    $(".colors").css("display", "none");
 };
 
 
