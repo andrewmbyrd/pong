@@ -5,6 +5,7 @@ body{
     font-size: 2.5em;
 }
 
+
 .center{
     text-align: center;
     margin: 0 auto;
@@ -15,11 +16,18 @@ body{
     margin: 0 20px;
 }
 
-.controls p{
-   width: 50%;
-   float: left;
+.controls{
+    display: none;
 }
 
+.controls p{
+   width: 50%;
+   margin: 30px auto;
+}
+
+.difficulty{
+    display: none;
+}
 table{
     width: 60%;
 }
@@ -37,11 +45,78 @@ td{
     
 }
 
+.difficulty p{
+    margin: 10px;
+}
+
+.colors{
+    display: none;
+}
+
+#comp-color{
+    display: none;
+}
+
+#p2-color{
+    display: none;
+}
+
+.yellow{
+    background-color: yellow;
+    
+}
+
+.blue{
+    background-color: blue;
+}
+
+.green{
+    background-color: green;
+}
+
+.pink{
+    background-color: hotpink;
+}
+
+.white{
+    background-color: white;
+}
+
+.red{
+    background-color: red;
+}
+
+.choice:hover{
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+.small{
+    font-size: 0.6em;
+    display: none;
+}
 td div{
     width: 30%;
     height: 20px;
     margin: 9px auto;
 }
+
+.begin{
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 20px;
+    vertical-align: middle;
+    margin: 300px auto 10px auto;
+    color: aliceblue;
+    background-color: black;
+    display: none;
+}
+
+.begin h2{
+    margin: 0;
+}
+
 #table{
     display: none;
+    margin: 0 auto;
 }

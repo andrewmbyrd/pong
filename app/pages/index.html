@@ -9,50 +9,61 @@
     <h1 class="home center">Welcome to Pong!</h2>
     <section class="home center">
         
-        <div class="players">
+        <div class="players menu">
             <h3> Select Your Play Mode</h3>
-            <p id="1player"> 1 Player</p>
-            <p id="2player"> 2 Player</p>
+            <p id="1player" class="choice"> 1 Player</p>
+            <p id="2player" class="choice"> 2 Player</p>
         </div>
         
-        <div class="controls">
-            <h3>Select P1 Control Scheme</h3>
-            <p>Mouse</p>
-            <p>Keyboard - W is up S is down</p>
+        <div class="difficulty menu">
+            <h3> Select Computer Difficulty</h3>
+            <p id="easy" class="hardness choice"> Easy </p>
+            <p id="medium" class="hardness choice"> Medium</p>
+            <p id="impossible" class="hardness choice"> Literally Impossible </p>
+        </div>
+        <div class="controls menu">
+            <h3> Select P1 Control Scheme <span class="small">(P2, you got &uarr; and &darr; bud)</span></h3>
+            <p id="mouse" class="control choice">Mouse</p>
+            <p id="keyboard" class="control choice">Keyboard - W is up S is down</p>
         </div>
         
-        <div class="colors">
+        
+        <div class="colors menu">
             <h3> Select Paddle Color!</h3>
             <table class="center">
                 <tr>
                     <th>Player 1</th>
-                    <th>Player 2</th>
+                    <th><span id="comp-color">Computer</span><span id="p2-color">Player 2</span></th>
                 </tr>
                 <tr>
                     <td>
-                        <div class="yellow"></div>
-                        <div class="blue"></div>
-                        <div class="green"></div>
-                        <div class="pink"></div>
-                        <div class="white"></div>
-                        <div class="black"></div>     
+                        <div class="yellow color1 choice"></div>
+                        <div class="blue color1 choice"></div>
+                        <div class="green color1 choice"></div>
+                        <div class="pink color1 choice"></div>
+                        <div class="white color1 choice"></div>
+                        <div class="red color1 choice"></div>     
                     </td>
                     <td>
-                        <div class="yellow"></div>
-                        <div class="blue"></div>
-                        <div class="green"></div>
-                        <div class="pink"></div>
-                        <div class="white"></div>
-                        <div class="black"></div> 
+                        <div class="yellow color2 choice"></div>
+                        <div class="blue color2 choice"></div>
+                        <div class="green color2 choice"></div>
+                        <div class="pink color2 choice"></div>
+                        <div class="white color2 choice"></div>
+                        <div class="red color2 choice"></div> 
                     </td>
                 </tr>
             </table>
+        </div>
+        <div class="begin choice">
+            <h2>Press To Start!</h2>
         </div>
     </section>
     <div class="game center">
         <canvas id="table" width="1550" height="930"</canvas>
     </div>
     
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
     <script src= "https://cdnjs.cloudflare.com/ajax/libs/buzz/1.1.10/buzz.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js"></script>
     <script src="/app/scripts/gameCtrl.js">

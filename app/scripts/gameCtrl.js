@@ -85,6 +85,8 @@ function Player(x,y, speed, isHuman){
     this.y = y;
     this.speed = speed;
     this.isHuman = isHuman;
+    this.color = "white";
+    this.control = "keys";
 
 
     this.width = 5;
@@ -372,6 +374,66 @@ window.addEventListener("keypress", function(event){
 });
 
 
+var color1Selected = false;
+var color2Selected = false;
 
-window.onload = render;  
+//is there a way to optimize these two functions to be just one?
+var revealControls = function(){
+    $(".difficulty").css("display", "none");
+    $(".controls").css("display", "block");
+};
+
+var revealControls2 = function(){
+    $(".players").css("display", "none");
+    $(".controls").css("display", "block");
+    $(".small").css("display", "inline");
+    $("#p2-color").css("display", "block");
+}
+
+var revealDifficulty = function(){
+    $(".players").css("display", "none");
+    $(".difficulty").css("display", "block");
+    $("#comp-color").css("display", "block");
+};
+
+
+var revealColors = function(){
+    $(".controls").css("display", "none");
+    $(".colors").css("display", "block");
+};
+
+var p1RevealStart = function(){
+    color1Selected = true;
+    if(color1Selected && color2Selected){
+        $(".colors").css("display", "none");
+        $(".begin").css("display", "block");
+    }
+};
+
+var p2RevealStart = function(){
+    color2Selected = true;
+    if(color1Selected && color2Selected){
+        $(".colors").css("display", "none");
+        $(".begin").css("display", "block");
+    }
+};
+  
+
+var showTable = function(){
+    $(".begin").css("display", "none");
+    $("#table").css("display", "block");
+    $("h1").css("display", "none");
+};
+
+
+$("#1player").click(revealDifficulty);
+$("#2player").click(revealControls2);
+$(".hardness").click(revealControls);
+$(".controls").click(revealColors);
+$(".color1").click(p1RevealStart);
+$(".color2").click(p2RevealStart);
+$(".begin").click(showTable);
+
+window.onload = render; 
+
    
