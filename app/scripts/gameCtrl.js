@@ -403,7 +403,11 @@ var revealColors = function(){
 };
 
 var p1RevealStart = function(){
+    console.log($(this));
+    console.log($(this.id)["selector"]);
     color1Selected = true;
+    $(".color1").css("border", "none");
+    $(this).css("border", "2px dashed orange");
     if(color1Selected && color2Selected){
         $(".colors").css("display", "none");
         $(".begin").css("display", "block");
@@ -412,6 +416,10 @@ var p1RevealStart = function(){
 
 var p2RevealStart = function(){
     color2Selected = true;
+    console.log($(this));
+    console.log($(this.id)["selector"]);
+    $(".color2").css("border", "none");
+    $(this).css("border", "2px dashed orange");
     if(color1Selected && color2Selected){
         $(".colors").css("display", "none");
         $(".begin").css("display", "block");
@@ -430,8 +438,17 @@ $("#1player").click(revealDifficulty);
 $("#2player").click(revealControls2);
 $(".hardness").click(revealControls);
 $(".controls").click(revealColors);
-$(".color1").click(p1RevealStart);
-$(".color2").click(p2RevealStart);
+
+
+$.each($(".color1"), function(){
+    $(this).click(p1RevealStart);
+});
+
+$.each($(".color2"), function(){
+    $(this).click(p2RevealStart);
+});
+
+
 $(".begin").click(showTable);
 
 window.onload = render; 
