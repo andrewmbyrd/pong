@@ -1,6 +1,66 @@
 var canvas = document.getElementById("table");
 var context = canvas.getContext("2d");
+var intro = new buzz.sound("/app/assets/sounds/home", {
+                            formats: ["mp3", "aac", "wav", "midi"],
+                            preload: true,
+                            autoplay: true,
+                            loop: true
+                           
+                           });
 
+var bgm = new buzz.sound("/app/assets/sounds/bgm", {
+                            formats: ["mp3", "aac", "wav", "midi"],
+                            preload: true,
+                            autoplay: false,
+                            loop: true
+                           
+                           });
+
+var select = new buzz.sound("/app/assets/sounds/select",{
+    formats: ["m4a"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+var start = new buzz.sound("/app/assets/sounds/start",{
+    formats: ["mp3", "aac", "wav", "midi"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+var boop1 = new buzz.sound("/app/assets/sounds/boop1",{
+    formats: ["m4a"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+var boop2 = new buzz.sound("/app/assets/sounds/boop2",{
+    formats: ["m4a"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+var boop3 = new buzz.sound("/app/assets/sounds/boop3",{
+    formats: ["m4a"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+var wall = new buzz.sound("/app/assets/sounds/wall",{
+    formats: ["m4a"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
+wall.setVolume(30);
+
+var hitSounds = [boop1, boop2, boop3];
 
 WebFont.load({
    google: {
@@ -231,11 +291,15 @@ function Ball(x_pos, y_pos){
         
         if(this.x < 2){
             p2Score++;
+            bgm.stop();
+            bgm.setPercent(0);
             this.reset(2);
         }
         
         if(this.x > canvas.width -2){
             p1Score++;
+            bgm.stop();
+            bgm.setPercent(0);
             this.reset(1);
         }
         
@@ -298,33 +362,33 @@ function Ball(x_pos, y_pos){
         var top = this.y - this.radius;
         var bottom = this.y + this.radius;
         //detect collision with player 1 paddle
-        if(leftEdge < 35 && leftEdge > 0 ){
+        if(leftEdge < 35 && leftEdge > 30 ){
             if (player1.y <= this.y + this.radius && player1.y+player1.height >= this.y - this.radius){
                 this.direction = pi - this.direction;
                 hits++;
-                console.log("left score: " +p1Score);
-                console.log("right score: " +p2Score);
-                console.log("hits: " +hits);
-                console.log("speed " + this.speed);
+                hitSounds[Math.floor(Math.random()*3)].play();
             }
         }
         
         //detect collision with second player paddle
-        if(rightEdge > canvas.width - 35  && rightEdge < canvas.width){
+        if(rightEdge > canvas.width - 35  && rightEdge < canvas.width - 30){
             if (player2.y <= this.y + this.radius && player2.y+player2.height >= this.y - this.radius){
                 this.direction = pi - this.direction;
                 hits++;
+                hitSounds[Math.floor(Math.random()*3)].play();
             }
         }
         
         //detect collision with top of table
         if(top < 15){
             this.direction *= -1;
+            wall.play();
         }
         
         //detect collision with bottom of table
         if(bottom > canvas.height - 15){
             this.direction *= -1;
+            wall.play();
         }
     };
    
@@ -393,6 +457,7 @@ window.addEventListener("keydown", function(event){
 window.addEventListener("keypress", function(event){
     if(event.keyCode == 32){
         ball.canMove = true;
+        bgm.play();
         step();
         ball.speed = ball.startSpeed;
     }
@@ -411,12 +476,14 @@ var color2Selected = false;
 
 //is there a way to optimize these two functions to be just one?
 var revealControls = function(){
+    select.play();
     player2.difficulty = $(this.id)["selector"];
     $(".difficulty").css("display", "none");
     $(".controls").css("display", "block");
 };
 
 var revealControls2 = function(){
+    select.play();
     $(".players").css("display", "none");
     $(".controls").css("display", "block");
     $(".small").css("display", "inline");
@@ -425,6 +492,7 @@ var revealControls2 = function(){
 }
 
 var revealDifficulty = function(){
+    select.play();
     $(".players").css("display", "none");
     $(".difficulty").css("display", "block");
     $("#comp-color").css("display", "block");
@@ -433,6 +501,7 @@ var revealDifficulty = function(){
 
 
 var revealColors = function(){
+    select.play();
     console.log($(this.id)["selector"]);
     $(".controls").css("display", "none");
     $(".colors").css("display", "block");
@@ -444,6 +513,7 @@ var revealColors = function(){
 };
 
 var p1RevealStart = function(){
+    select.play();
     console.log($(this));
     console.log($(this.id)["selector"]);
     color1Selected = true;
@@ -457,6 +527,7 @@ var p1RevealStart = function(){
 };
 
 var p2RevealStart = function(){
+    select.play();
     color2Selected = true;
     player2.color = $(this.id)["selector"].substr(0, $(this.id)["selector"].length -1);
     console.log(player2.color);
@@ -472,6 +543,8 @@ var p2RevealStart = function(){
   
 
 var showTable = function(){
+    intro.stop();
+    start.play();
     $(".begin").css("display", "none");
     $("#table").css("display", "block");
     $("h1").css("display", "none");
