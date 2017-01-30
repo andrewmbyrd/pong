@@ -85,8 +85,6 @@ function Player(x,y, speed, isHuman){
     this.y = y;
     this.speed = speed;
     this.isHuman = isHuman;
-    this.color = "white";
-    this.control = "keys";
 
 
     this.width = 5;
@@ -98,18 +96,30 @@ function Player(x,y, speed, isHuman){
     */
     this.move = function(code){
         
-        if(code == 119 || code == 87 || code == 38){
-            if(this.y > 10 + this.speed){
-                this.y -= this.speed;    
+            if(code == 119 || code == 87 || code == 38){
+                if(this.y > 10 + this.speed){
+                    this.y -= this.speed;    
+                }
+            }else if(code == 115 || code == 83 || code == 40){
+                if(this.y + this.height< canvas.height - 10 - this.speed){  
+                    this.y += this.speed;  
+                }
             }
-        }else if(code == 115 || code == 83 || code == 40){
-            if(this.y + this.height< canvas.height - 10 - this.speed){  
-                this.y += this.speed;  
-            }
-        }
+        
         
         this.render();
     };
+    
+    this.slide = function(event){
+        console.log(event.clientY);
+        while(this.y + this.height/2 > event.clientY && this.y > 10){
+            this.y -= this.speed;
+        }
+        
+        while(this.y + this.height/2 < event.clientY && this.y < canvas.height - 10){
+            this.y += this.speed;
+        }
+    }
 
     this.render = function(){
         //get the canvas element and context
@@ -119,7 +129,7 @@ function Player(x,y, speed, isHuman){
         context.beginPath();
 
         //change this depending if I ever implement different color paddles
-        context.strokeStyle = "#fff";
+        context.strokeStyle = this.color;
 
 
         context.moveTo(this.x, this.y);
@@ -133,26 +143,40 @@ function Player(x,y, speed, isHuman){
     
     this.defend = function(){
         
-        if(this.x - ball.x < 200){
-            if ((ball.y - 50 > this.y + this.height/2) && (this.y + this.height< canvas.height - 10 - this.speed)){
-                this.y += this.speed;
-            }
-
-            if(( ball.y + 50 < this.y + this.height/2) && (this.y > 10 + this.speed)){
-                this.y -= this.speed;    
-            }
-        }else{
-            if ((ball.y - 200 > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
-                this.y += this.speed;
-            }
-
-            if(( ball.y + 150 < this.y + this.height/2) && (this.y > 10 + this.speed)){
-                this.y -= this.speed;    
-            }
+        switch(this.difficulty){
+            case "easy":
+                var scopeX = 200;
+                var scopeY = 50;
+            break;
+            case "medium":
+                var scopeX = 400;
+                var scopeY = 25;
+            break;
+            default:
+                var scopeX = canvas.width;
+                var scopeY = 0;
         }
+        
+        if(this.x - ball.x < scopeX){
+            if ((ball.y - scopeY> this.y + this.height/2) && (this.y + this.height< canvas.height - 10 - this.speed)){
+                this.y += this.speed;
+            }
+
+            if(( ball.y + scopeY < this.y + this.height/2) && (this.y > 10 + this.speed)){
+                this.y -= this.speed;    
+            }
+        }/*else{
+            if ((ball.y - delay > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
+                this.y += this.speed;
+            }
+
+            if(( ball.y + delay*3/4 < this.y + this.height/2) && (this.y > 10 + this.speed)){
+                this.y -= this.speed;    
+            }
+        }*/
     };
 
-}
+ }
 
 var player1 = new Player(25, 300, 20, true);
 var player2 = new Player(canvas.width - 25, 300, 4, true);
@@ -309,6 +333,7 @@ function Ball(x_pos, y_pos){
         var context = canvas.getContext("2d");
 
         context.beginPath();
+        context.strokeStyle = "#fff";
         context.arc(ball.x, ball.y, ball.radius, 0, 2*Math.PI, false);
         context.closePath();
         context.fillStyle = "#fff";
@@ -346,7 +371,7 @@ var step = function(timestamp){
     }
     if(ball.canMove)
         animationID = animate(step);
-    console.log("animate: " +animationID);
+   // console.log("animate: " +animationID);
     
 };
 
@@ -373,12 +398,20 @@ window.addEventListener("keypress", function(event){
     }
 });
 
+canvas.addEventListener("mousemove", function(event){
+    if(player1.control == "mouse"){
+        player1.slide(event);
+    }
+    
+});
+
 
 var color1Selected = false;
 var color2Selected = false;
 
 //is there a way to optimize these two functions to be just one?
 var revealControls = function(){
+    player2.difficulty = $(this.id)["selector"];
     $(".difficulty").css("display", "none");
     $(".controls").css("display", "block");
 };
@@ -388,39 +421,52 @@ var revealControls2 = function(){
     $(".controls").css("display", "block");
     $(".small").css("display", "inline");
     $("#p2-color").css("display", "block");
+    player2.isHuman = true;
 }
 
 var revealDifficulty = function(){
     $(".players").css("display", "none");
     $(".difficulty").css("display", "block");
     $("#comp-color").css("display", "block");
+    player2.isHuman = false;
 };
 
 
 var revealColors = function(){
+    console.log($(this.id)["selector"]);
     $(".controls").css("display", "none");
     $(".colors").css("display", "block");
+    if( $(this.id)["selector"] == "mouse"){
+        player1.control = "mouse";
+    }else{
+        player1.control = "keys";
+    }
 };
 
 var p1RevealStart = function(){
     console.log($(this));
     console.log($(this.id)["selector"]);
     color1Selected = true;
+    player1.color = $(this.id)["selector"];
     $(".color1").css("border", "none");
     $(this).css("border", "2px dashed orange");
     if(color1Selected && color2Selected){
         $(".begin").css("display", "block");
+        render();
     }
 };
 
 var p2RevealStart = function(){
     color2Selected = true;
+    player2.color = $(this.id)["selector"].substr(0, $(this.id)["selector"].length -1);
+    console.log(player2.color);
     console.log($(this));
     console.log($(this.id)["selector"]);
     $(".color2").css("border", "none");
     $(this).css("border", "2px dashed orange");
     if(color1Selected && color2Selected){ 
         $(".begin").css("display", "block");
+        render();
     }
 };
   
@@ -435,9 +481,15 @@ var showTable = function(){
 
 $("#1player").click(revealDifficulty);
 $("#2player").click(revealControls2);
-$(".hardness").click(revealControls);
-$(".controls").click(revealColors);
+//$(".hardness").click(revealControls);
 
+$.each($(".hardness"), function(){
+    $(this).click(revealControls);
+})
+
+$.each($(".control"), function(){
+    $(this).click(revealColors);
+});
 
 $.each($(".color1"), function(){
     $(this).click(p1RevealStart);
@@ -450,6 +502,7 @@ $.each($(".color2"), function(){
 
 $(".begin").click(showTable);
 
-window.onload = render; 
+
+
 
    

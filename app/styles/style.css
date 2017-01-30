@@ -101,6 +101,20 @@ td div{
     margin: 9px auto;
 }
 
+@keyframes blink{
+    0%, 100% {
+        background-color: black;
+        color: aliceblue;
+        border: 1px solid black;
+    }
+    
+    50% {
+       background-color: aliceblue;
+        color: black;
+        border: 1px solid aliceblue; 
+    }
+}
+
 .begin{
     width: 300px;
     border: 1px solid black;
@@ -110,6 +124,7 @@ td div{
     color: aliceblue;
     background-color: black;
     display: none;
+    animation: blink 2.2s infinite step-end;
 }
 
 .begin h2{
@@ -120,3 +135,5 @@ td div{
     display: none;
     margin: 0 auto;
 }
+
+
