@@ -51,6 +51,13 @@ var boop3 = new buzz.sound("/app/assets/sounds/boop3",{
     loop: false
 });
 
+var winner = new buzz.sound("/app/assets/sounds/winner",{
+    formats: ["wav"],
+    preload: true,
+    autoplay: false,
+    loop: false
+});
+
 var wall = new buzz.sound("/app/assets/sounds/wall",{
     formats: ["m4a"],
     preload: true,
@@ -171,7 +178,7 @@ function Player(x,y, speed, isHuman){
     };
     
     this.slide = function(event){
-        console.log(event.clientY);
+        
         while(this.y + this.height/2 > event.clientY && this.y > 10){
             this.y -= this.speed;
         }
@@ -334,6 +341,7 @@ function Ball(x_pos, y_pos){
     };
     
     this.endGame = function(player){
+        winner.play();
         var congrats;
         var spacer = 100;
         if(player == 1){
@@ -363,8 +371,10 @@ function Ball(x_pos, y_pos){
         var bottom = this.y + this.radius;
         //detect collision with player 1 paddle
         if(leftEdge < 35 && leftEdge > 30 ){
+            //if the ball is blocked from exiting by the paddle
             if (player1.y <= this.y + this.radius && player1.y+player1.height >= this.y - this.radius){
-                this.direction = pi - this.direction;
+                
+                this.direction = ((player1.y+50 - this.y)/50.0)*pi/3;
                 hits++;
                 hitSounds[Math.floor(Math.random()*3)].play();
             }
@@ -373,7 +383,7 @@ function Ball(x_pos, y_pos){
         //detect collision with second player paddle
         if(rightEdge > canvas.width - 35  && rightEdge < canvas.width - 30){
             if (player2.y <= this.y + this.radius && player2.y+player2.height >= this.y - this.radius){
-                this.direction = pi - this.direction;
+                this.direction = (2+(this.y - player2.y)/50.0)*pi/3;
                 hits++;
                 hitSounds[Math.floor(Math.random()*3)].play();
             }
