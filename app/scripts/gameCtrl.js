@@ -1,5 +1,10 @@
 var canvas = document.getElementById("table");
 var context = canvas.getContext("2d");
+
+var p1Score = 0;
+var p2Score = 0;
+var hits = 0;
+
 var intro = new buzz.sound("/app/assets/sounds/home", {
                             formats: ["mp3", "aac", "wav", "midi"],
                             preload: true,
@@ -134,19 +139,8 @@ function Table(){
 
 var table = new Table();
 
-var p1Score = 0;
-var p2Score = 0;
-
-var hits = 0;
-
- 
-
-
 
 function Player(x,y, speed, isHuman){
-
-    
-    var canvas = document.getElementById("table");
 
     this.x = x;
     this.y = y;
@@ -183,10 +177,10 @@ function Player(x,y, speed, isHuman){
             this.y -= this.speed;
         }
         
-        while(this.y + this.height/2 < event.clientY && this.y < canvas.height - 10){
+        while(this.y + this.height/2 < event.clientY && this.y+100 < canvas.height - 10){
             this.y += this.speed;
         }
-    }
+    };
 
     this.render = function(){
         //get the canvas element and context
@@ -212,12 +206,14 @@ function Player(x,y, speed, isHuman){
         
         switch(this.difficulty){
             case "easy":
-                var scopeX = 200;
-                var scopeY = 50;
+                var scopeX = 300;
+                var scopeY = 55;
+                this.speed = 10;
             break;
             case "medium":
                 var scopeX = 400;
                 var scopeY = 25;
+                this.speed = 15;
             break;
             default:
                 var scopeX = canvas.width;
@@ -246,7 +242,7 @@ function Player(x,y, speed, isHuman){
  }
 
 var player1 = new Player(25, 300, 20, true);
-var player2 = new Player(canvas.width - 25, 300, 4, true);
+var player2 = new Player(canvas.width - 25, 300, 20, true);
 
 function Ball(x_pos, y_pos){
 
@@ -254,7 +250,7 @@ function Ball(x_pos, y_pos){
     this.x = x_pos;
     this.y = y_pos;
     this.radius = 5;
-    this.startSpeed = 4;
+    this.startSpeed = 10;
     this.speed = this.startSpeed;
     this.canMove = false;
     
@@ -266,33 +262,23 @@ function Ball(x_pos, y_pos){
     
     this.move = function(code){
         
+        var vectorLength = this.speed;
         
-        
-        var canvas = document.getElementById("table");
-        var context = canvas.getContext("2d");
-        
-        //if the ball is nowhwere near the paddles, then move normally
-       // if(this.x + Math.cos(this.direction) * this.speed > 36 && this.x + Math.cos(this.direction) * this.speed //< canvas.width - 36 ){
-            this.x += Math.cos(this.direction) * this.speed;
-       /* }else{
+        if(this.x < 60 && Math.cos(this.direction)*vectorLength < -10 ){
+            vectorLength = 10;
             
-            //if moving the ball would put it to the left of the left paddle,
-            //AND the left paddle is covering it from going out of bounds
-            //put it directly on the left paddle instead
-            if((this.x + Math.cos(this.direction) * this.speed < this.x) && this.y> player1.y && this.y < player1.y+player1.height){
-                this.x = 35;
             
-            //if moving it would put it to the right of the right paddle,
-            //put it right on the right paddle instead
-            }else if((this.x + Math.cos(this.direction) * this.speed > this.x) && this.y> player2.y && this.y < player2.y + player2.height){
-                this.x = canvas.width - 35;
-            }else{
-                this.x += Math.cos(this.direction) * this.speed;
-            }
-            
+        }else if(this.x > canvas.width - 60 && Math.cos(this.direction)*vectorLength > 10 ){
+            vectorLength = 10;
         }
-        */
-        this.y -= Math.sin(this.direction) * this.speed;
+      //if the ball is nowhwere near the paddles, then move normally
+
+       this.x += Math.cos(this.direction) * vectorLength;
+       this.y -= Math.sin(this.direction) * vectorLength;
+        
+        
+       
+        
         
         this.detectCollision();
         
@@ -316,6 +302,7 @@ function Ball(x_pos, y_pos){
     
     this.reset = function(scoringPlayer){
         this.speed = 0;
+        hits = 0;
         this.canMove = false;
         this.x = canvas.width/2;
         this.y = canvas.height/2;
@@ -331,9 +318,10 @@ function Ball(x_pos, y_pos){
         }
         
         
-        context.font = 'bold 50pt VT323'
+        context.font = 'bold 50pt VT323';
         context.fillText(String(p1Score), canvas.width/4, 100);
         context.fillText(String(p2Score), canvas.width*3/4, 100);
+        context.fillText("Press SPACE to continue", canvas.width/3 - 23, canvas.height - 400);
         
         if(p1Score > 10 || p2Score > 10){
             this.endGame(scoringPlayer);
@@ -350,7 +338,7 @@ function Ball(x_pos, y_pos){
             congrats = "Player 2 Wins!";
         }else{
             congrats = "The computer won!! :O :(";
-            spacer = 0;
+            spacer = -40; 
         }
         
         context.fillText(congrats, canvas.width/3 + spacer, canvas.height/2);
@@ -369,20 +357,29 @@ function Ball(x_pos, y_pos){
         var rightEdge = this.x + this.radius;
         var top = this.y - this.radius;
         var bottom = this.y + this.radius;
+        
         //detect collision with player 1 paddle
-        if(leftEdge < 35 && leftEdge > 30 ){
+        if(leftEdge < 35 && leftEdge >= 25 ){
             //if the ball is blocked from exiting by the paddle
-            if (player1.y <= this.y + this.radius && player1.y+player1.height >= this.y - this.radius){
-                
+            if (player1.y <= bottom && player1.y+player1.height >= top && Math.cos(this.direction) < 0){
                 this.direction = ((player1.y+50 - this.y)/50.0)*pi/3;
                 hits++;
+                if(this.startSpeed + Math.sqrt(hits) > 15){
+                    this.speed = this.startSpeed + 1.5*Math.sqrt(hits);
+                }else{
+                    this.speed = this.startSpeed + Math.sqrt(hits);
+                }
+                
+                console.log("hits" + hits);
+                console.log("speed " +this.speed);
                 hitSounds[Math.floor(Math.random()*3)].play();
             }
         }
         
+        
         //detect collision with second player paddle
-        if(rightEdge > canvas.width - 35  && rightEdge < canvas.width - 30){
-            if (player2.y <= this.y + this.radius && player2.y+player2.height >= this.y - this.radius){
+        if(rightEdge > canvas.width - 30 && rightEdge <= canvas.width - 20 &&  Math.cos(this.direction) > 0){
+            if (player2.y - 10 <= bottom  && player2.y+player2.height + 3 >= top){ 
                 this.direction = (2+(this.y - player2.y)/50.0)*pi/3;
                 hits++;
                 hitSounds[Math.floor(Math.random()*3)].play();
@@ -440,7 +437,7 @@ var step = function(timestamp){
     render();
     if(ball.canMove)
         ball.move();
-    if(!player2.isHuman && Math.cos(ball.direction) >0 && ball.x > canvas.width/2){
+    if(!player2.isHuman){
         player2.defend();
     }
     if(ball.canMove)
@@ -499,7 +496,7 @@ var revealControls2 = function(){
     $(".small").css("display", "inline");
     $("#p2-color").css("display", "block");
     player2.isHuman = true;
-}
+};
 
 var revealDifficulty = function(){
     select.play();
@@ -559,6 +556,8 @@ var showTable = function(){
     $("#table").css("display", "block");
     $("h1").css("display", "none");
     $(".colors").css("display", "none");
+    context.font = 'bold 50pt VT323';
+    context.fillText("Press SPACE to continue", canvas.width/3 - 23, canvas.height - 400);
 };
 
 
@@ -568,7 +567,7 @@ $("#2player").click(revealControls2);
 
 $.each($(".hardness"), function(){
     $(this).click(revealControls);
-})
+});
 
 $.each($(".control"), function(){
     $(this).click(revealColors);
