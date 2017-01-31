@@ -1,10 +1,13 @@
+//get the canvas and context objects to be used throughout the project
 var canvas = document.getElementById("table");
 var context = canvas.getContext("2d");
 
+//store global hit and score variables
 var p1Score = 0;
 var p2Score = 0;
 var hits = 0;
 
+//initialize sound objects
 var intro = new buzz.sound("/app/assets/sounds/home", {
                             formats: ["mp3", "aac", "wav", "midi"],
                             preload: true,
@@ -29,7 +32,7 @@ var select = new buzz.sound("/app/assets/sounds/select",{
 });
 
 var start = new buzz.sound("/app/assets/sounds/start",{
-    formats: ["mp3", "aac", "wav", "midi"],
+    formats: ["wav", "midi"],
     preload: true,
     autoplay: false,
     loop: false
@@ -74,11 +77,17 @@ wall.setVolume(30);
 
 var hitSounds = [boop1, boop2, boop3];
 
+//get the retro font
 WebFont.load({
    google: {
        families: ['VT323']
    } 
 });
+
+/*@constructor function Table
+*@desc sets up the width and height of the table
+*has a function to draw the table
+*/
 function Table(){
 
     this.draw = function(){
@@ -139,13 +148,15 @@ function Table(){
 
 var table = new Table();
 
-
-function Player(x,y, speed, isHuman){
-
+/* constructor function Player
+*@desc creates methods for the two players
+*/
+function Player(x,y, speed){
+    
     this.x = x;
     this.y = y;
     this.speed = speed;
-    this.isHuman = isHuman;
+    this.isHuman = true;
 
 
     this.width = 5;
@@ -171,6 +182,10 @@ function Player(x,y, speed, isHuman){
         this.render();
     };
     
+    
+    /* function slide
+    *@desc allows the paddle to move based on mouse movement
+    */
     this.slide = function(event){
         
         while(this.y + this.height/2 > event.clientY && this.y > 10){
@@ -181,7 +196,10 @@ function Player(x,y, speed, isHuman){
             this.y += this.speed;
         }
     };
-
+    
+    /* function render
+    *@desc draws the paddle based on the color selected in the menu
+    */
     this.render = function(){
         //get the canvas element and context
 
@@ -202,9 +220,16 @@ function Player(x,y, speed, isHuman){
 
     };
     
+    /* function defend
+    *@desc this function is called when player 2 is set as a computer
+    *the different difficulties allow for movement only when the location of the ball is 
+    *a certain way
+    */
     this.defend = function(){
         
         switch(this.difficulty){
+            //easy mode will only look if the ball is within 300px of the right paddle.
+            //will move if the ball is 55 pixels away from the center
             case "easy":
                 var scopeX = 300;
                 var scopeY = 55;
@@ -215,6 +240,8 @@ function Player(x,y, speed, isHuman){
                 var scopeY = 25;
                 this.speed = 15;
             break;
+                
+            //impossible mod always moves
             default:
                 var scopeX = canvas.width;
                 var scopeY = 0;
@@ -228,22 +255,19 @@ function Player(x,y, speed, isHuman){
             if(( ball.y + scopeY < this.y + this.height/2) && (this.y > 10 + this.speed)){
                 this.y -= this.speed;    
             }
-        }/*else{
-            if ((ball.y - delay > this.y) && (this.y + this.height< canvas.height - 10 - this.speed)){
-                this.y += this.speed;
-            }
-
-            if(( ball.y + delay*3/4 < this.y + this.height/2) && (this.y > 10 + this.speed)){
-                this.y -= this.speed;    
-            }
-        }*/
+        }
     };
 
  }
 
-var player1 = new Player(25, 300, 20, true);
-var player2 = new Player(canvas.width - 25, 300, 20, true);
+//instantiate the players with x location, initial y location, and speed
+var player1 = new Player(25, 300, 20);
+var player2 = new Player(canvas.width - 25, 300, 20);
 
+
+/* constructor function Ball
+*@desc creates all the ball properties and methods
+*/
 function Ball(x_pos, y_pos){
 
 
@@ -255,15 +279,25 @@ function Ball(x_pos, y_pos){
     this.canMove = false;
     
     var pi = Math.PI;
-    //gives a direction in radians. 0 degrees is east, 90 degrees is north
+    //gives a direction to be travelled in radians. 0 rads is east, pi/2 rads is north. 
+    //Initialize to go to the left on serve, within 30 degrees of horizontal
     this.direction = Math.random()*(7*pi/6-5*pi/6) + 5*pi/6; 
 
    
-    
+    /*function move
+    *@desc tells the ball object how to move
+    */
     this.move = function(code){
         
+        //vectorLength gives the magnitude of the distance to be travelled
         var vectorLength = this.speed;
         
+        /*checking for overshot of the paddle
+        *as the speed of the ball gets faster, it's possible that the ball will leap right over
+        *the 5 pixel width of the paddle. In order to combat this, if the magnitude of movement
+        *in the x direction could cause the ball to jump past the paddle, then slow it down
+        8such that the magnitude of x movement can't be greater than 10 pixels this step
+        */
         if(this.x < 60 && Math.cos(this.direction)*vectorLength < -10 ){
             vectorLength = 10;
             
@@ -272,16 +306,17 @@ function Ball(x_pos, y_pos){
             vectorLength = 10;
         }
       //if the ball is nowhwere near the paddles, then move normally
-
+        
+    
+       //using these geometric functions, we establish a vector on which to move the center of the ball 
        this.x += Math.cos(this.direction) * vectorLength;
        this.y -= Math.sin(this.direction) * vectorLength;
         
         
-       
-        
         
         this.detectCollision();
         
+        //if the ball gets past the paddles, award a score and reset the table
         if(this.x < 2){
             p2Score++;
             bgm.stop();
@@ -299,7 +334,11 @@ function Ball(x_pos, y_pos){
         
     };
     
-    
+    /*function reset
+    *@params Integer - the player that scored
+    @desc stops ball movement, resets game speed, puts the ball back in the center of the table WITHOUT rendering it
+    *establishes which direction the ball should be served, checks if the game is over
+    */
     this.reset = function(scoringPlayer){
         this.speed = 0;
         hits = 0;
@@ -321,36 +360,44 @@ function Ball(x_pos, y_pos){
         context.font = 'bold 50pt VT323';
         context.fillText(String(p1Score), canvas.width/4, 100);
         context.fillText(String(p2Score), canvas.width*3/4, 100);
-        context.fillText("Press SPACE to continue", canvas.width/3 - 23, canvas.height - 400);
+        context.fillText("Press SPACE to continue", canvas.width/4 - 20, canvas.height - 400);
         
         if(p1Score > 10 || p2Score > 10){
             this.endGame(scoringPlayer);
         }
     };
     
+    /*function endGame
+    *@params integer - the player who won
+    *if 11 points are scored, prints message to the screen and offers to reset the game
+    */
     this.endGame = function(player){
         winner.play();
         var congrats;
-        var spacer = 100;
+        var spacer = 10;
         if(player == 1){
             congrats = "Player 1 Wins!";
         }else if(player2.isHuman){
             congrats = "Player 2 Wins!";
         }else{
             congrats = "The computer won!! :O :(";
-            spacer = -40; 
+            spacer = -120; 
         }
         
         context.fillText(congrats, canvas.width/3 + spacer, canvas.height/2);
         context.font = 'normal 30pt VT323';
-        context.fillText("Press space to go ahead and run the game back again.", canvas.width/4, canvas.height/2 + 100);
-        context.fillText("Reload this page to select new game options!", canvas.width/4 + 80, canvas.height/2+175);
+        context.fillText("Press space to go ahead and run the game back again.", canvas.width/10, canvas.height/2 + 100);
+        context.fillText("Reload this page to select new game options!", canvas.width/5, canvas.height/2+175);
         
         p1Score = 0;
         p2Score = 0;
     };
     
     
+    /*function detect collision
+    *@desc checks if the ball hit a paddle, and if it did, change its direction
+    *(the move function which is running on the next frame will then make the ball go the other way)
+    */
     this.detectCollision = function(){
         
         var leftEdge = this.x - this.radius;
@@ -362,6 +409,8 @@ function Ball(x_pos, y_pos){
         if(leftEdge < 35 && leftEdge >= 25 ){
             //if the ball is blocked from exiting by the paddle
             if (player1.y <= bottom && player1.y+player1.height >= top && Math.cos(this.direction) < 0){
+                //give the ball a new direction in radians, anywhere from pi/3 to -(pi/3) based on where on the paddle the ball was struck
+                //increment the hits variable and speed up the ball
                 this.direction = ((player1.y+50 - this.y)/50.0)*pi/3;
                 hits++;
                 if(this.startSpeed + Math.sqrt(hits) > 15){
@@ -399,6 +448,7 @@ function Ball(x_pos, y_pos){
         }
     };
    
+    //draws the  ball on the canvas
     this.render = function(){
         var canvas = document.getElementById("table");
         var context = canvas.getContext("2d");
@@ -417,6 +467,7 @@ function Ball(x_pos, y_pos){
 var ball = new Ball(canvas.width/2, canvas.height/2);
 
 
+//draw the table, both players, and the ball
 var render = function(){
     
     table.draw();
@@ -429,8 +480,12 @@ var render = function(){
 
 var animate = window.requestAnimationFrame;
 
-//this variable just for development tracking
-var animationID;
+
+/*function step
+*@ desc - calls render 60 times per second if the ball can move. move the ball
+*if the player is a computer, ask it to move
+*(player directed movement is handled in event listeners below)
+*/
 
 var step = function(timestamp){
     
@@ -441,14 +496,13 @@ var step = function(timestamp){
         player2.defend();
     }
     if(ball.canMove)
-        animationID = animate(step);
-   // console.log("animate: " +animationID);
+        animate(step);
     
 };
 
 
 
-
+//check for up and down movement of the paddles
 window.addEventListener("keydown", function(event){
     if(event.keyCode == 87  || event.keyCode == 119 || event.keyCode == 115 || event.keyCode == 83)
         player1.move(event.keyCode);
@@ -461,6 +515,7 @@ window.addEventListener("keydown", function(event){
 });
 
 
+//pressing spacebar serves the ball
 window.addEventListener("keypress", function(event){
     if(event.keyCode == 32){
         ball.canMove = true;
@@ -470,6 +525,7 @@ window.addEventListener("keypress", function(event){
     }
 });
 
+//move the paddle with mouse input
 canvas.addEventListener("mousemove", function(event){
     if(player1.control == "mouse"){
         player1.slide(event);
@@ -481,7 +537,7 @@ canvas.addEventListener("mousemove", function(event){
 var color1Selected = false;
 var color2Selected = false;
 
-//is there a way to optimize these two functions to be just one?
+//these functions progress through menu items and set properties of the game
 var revealControls = function(){
     select.play();
     player2.difficulty = $(this.id)["selector"];
@@ -526,7 +582,7 @@ var p1RevealStart = function(){
     color1Selected = true;
     player1.color = $(this.id)["selector"];
     $(".color1").css("border", "none");
-    $(this).css("border", "2px dashed orange");
+    $(this).css("border", "2px dashed black");
     if(color1Selected && color2Selected){
         $(".begin").css("display", "block");
         render();
@@ -537,11 +593,8 @@ var p2RevealStart = function(){
     select.play();
     color2Selected = true;
     player2.color = $(this.id)["selector"].substr(0, $(this.id)["selector"].length -1);
-    console.log(player2.color);
-    console.log($(this));
-    console.log($(this.id)["selector"]);
     $(".color2").css("border", "none");
-    $(this).css("border", "2px dashed orange");
+    $(this).css("border", "2px dashed black");
     if(color1Selected && color2Selected){ 
         $(".begin").css("display", "block");
         render();
@@ -557,7 +610,7 @@ var showTable = function(){
     $("h1").css("display", "none");
     $(".colors").css("display", "none");
     context.font = 'bold 50pt VT323';
-    context.fillText("Press SPACE to continue", canvas.width/3 - 23, canvas.height - 400);
+    context.fillText("Press SPACE to continue", canvas.width/4 - 23, canvas.height - 400);
 };
 
 
