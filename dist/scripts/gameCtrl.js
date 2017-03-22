@@ -8,7 +8,7 @@ var p2Score = 0;
 var hits = 0;
 
 //initialize sound objects
-var intro = new buzz.sound("/app/assets/sounds/home", {
+var intro = new buzz.sound("/assets/sounds/home", {
                             formats: ["mp3", "aac", "wav", "midi"],
                             preload: true,
                             autoplay: true,
@@ -16,7 +16,7 @@ var intro = new buzz.sound("/app/assets/sounds/home", {
                            
                            });
 
-var bgm = new buzz.sound("/app/assets/sounds/bgm", {
+var bgm = new buzz.sound("/assets/sounds/bgm", {
                             formats: ["mp3", "aac", "wav", "midi"],
                             preload: true,
                             autoplay: false,
@@ -24,49 +24,49 @@ var bgm = new buzz.sound("/app/assets/sounds/bgm", {
                            
                            });
 
-var select = new buzz.sound("/app/assets/sounds/select",{
+var select = new buzz.sound("/assets/sounds/select",{
     formats: ["m4a"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var start = new buzz.sound("/app/assets/sounds/start",{
+var start = new buzz.sound("/assets/sounds/start",{
     formats: ["wav", "midi"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var boop1 = new buzz.sound("/app/assets/sounds/boop1",{
+var boop1 = new buzz.sound("/assets/sounds/boop1",{
     formats: ["m4a"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var boop2 = new buzz.sound("/app/assets/sounds/boop2",{
+var boop2 = new buzz.sound("/assets/sounds/boop2",{
     formats: ["m4a"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var boop3 = new buzz.sound("/app/assets/sounds/boop3",{
+var boop3 = new buzz.sound("/assets/sounds/boop3",{
     formats: ["m4a"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var winner = new buzz.sound("/app/assets/sounds/winner",{
+var winner = new buzz.sound("/assets/sounds/winner",{
     formats: ["wav"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
-var wall = new buzz.sound("/app/assets/sounds/wall",{
+var wall = new buzz.sound("/assets/sounds/wall",{
     formats: ["m4a"],
     preload: true,
     autoplay: false,
