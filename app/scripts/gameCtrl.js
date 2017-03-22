@@ -25,49 +25,49 @@ var bgm = new buzz.sound("/assets/sounds/bgm", {
                            });
 
 var select = new buzz.sound("/assets/sounds/select",{
-    formats: ["m4a"],
+    formats: ["m4a", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var start = new buzz.sound("/assets/sounds/start",{
-    formats: ["wav", "midi"],
+    formats: ["wav", "midi", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var boop1 = new buzz.sound("/assets/sounds/boop1",{
-    formats: ["m4a"],
+    formats: ["m4a", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var boop2 = new buzz.sound("/assets/sounds/boop2",{
-    formats: ["m4a"],
+    formats: ["m4a", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var boop3 = new buzz.sound("/assets/sounds/boop3",{
-    formats: ["m4a"],
+    formats: ["m4a", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var winner = new buzz.sound("/assets/sounds/winner",{
-    formats: ["wav"],
+    formats: ["wav", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
 });
 
 var wall = new buzz.sound("/assets/sounds/wall",{
-    formats: ["m4a"],
+    formats: ["m4a", "mp3"],
     preload: true,
     autoplay: false,
     loop: false
