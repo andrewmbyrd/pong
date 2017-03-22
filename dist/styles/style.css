@@ -1,0 +1,139 @@
+body{
+    background-color: darkslategrey;
+    border-color: darskslategrey;
+    font-family: 'VT323';
+    font-size: 2.5em;
+}
+
+
+.center{
+    text-align: center;
+    margin: 0 auto;
+}
+
+.players p{
+    display: inline;
+    margin: 0 20px;
+}
+
+.controls{
+    display: none;
+}
+
+.controls p{
+   width: 50%;
+   margin: 30px auto;
+}
+
+.difficulty{
+    display: none;
+}
+table{
+    width: 60%;
+}
+tr{
+    width: 33%;
+}
+
+th{
+    border: 2px solid black;
+}
+
+td{
+    border: 1px solid black;
+    margin: 0 auto;
+    
+}
+
+.difficulty p{
+    margin: 10px;
+}
+
+.colors{
+    display: none;
+}
+
+#comp-color{
+    display: none;
+}
+
+#p2-color{
+    display: none;
+}
+
+.yellow{
+    background-color: yellow;
+    
+}
+
+.blue{
+    background-color: blue;
+}
+
+.green{
+    background-color: green;
+}
+
+.pink{
+    background-color: hotpink;
+}
+
+.white{
+    background-color: white;
+}
+
+.red{
+    background-color: red;
+}
+
+.choice:hover{
+    cursor: pointer;
+    border: 1px solid black;
+}
+
+.small{
+    font-size: 0.6em;
+    display: none;
+}
+td div{
+    width: 30%;
+    height: 20px;
+    margin: 9px auto;
+}
+
+@keyframes blink{
+    0%, 100% {
+        background-color: black;
+        color: aliceblue;
+        border: 1px solid black;
+    }
+    
+    50% {
+       background-color: aliceblue;
+        color: black;
+        border: 1px solid aliceblue; 
+    }
+}
+
+.begin{
+    width: 300px;
+    border: 1px solid black;
+    border-radius: 20px;
+    vertical-align: middle;
+    margin: 300px auto 10px auto;
+    color: aliceblue;
+    background-color: black;
+    display: none;
+    animation: blink 2.2s infinite step-end;
+}
+
+.begin h2{
+    margin: 0;
+}
+
+#table{
+    display: none;
+    margin: 0 auto;
+}
+
+
