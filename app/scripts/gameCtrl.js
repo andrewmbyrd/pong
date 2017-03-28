@@ -143,6 +143,7 @@ function Table(){
         context.closePath();
         context.stroke();
     };
+    this.canBegin = false;
 
 }
 
@@ -168,18 +169,18 @@ function Player(x,y, speed){
     */
     this.move = function(code){
         
-            if(code == 119 || code == 87 || code == 38){
+            if(code == 119 || code == 87 || code == 38 ){
                 if(this.y > 10 + this.speed){
                     this.y -= this.speed;    
                 }
-            }else if(code == 115 || code == 83 || code == 40){
+            }else if(code == 115 || code == 83 || code == 40 ){
                 if(this.y + this.height< canvas.height - 10 - this.speed){  
                     this.y += this.speed;  
                 }
             }
         
         
-        this.render();
+        
     };
     
     
@@ -505,7 +506,9 @@ var step = function(timestamp){
 //check for up and down movement of the paddles
 window.addEventListener("keydown", function(event){
     if(event.keyCode == 87  || event.keyCode == 119 || event.keyCode == 115 || event.keyCode == 83)
-        player1.move(event.keyCode);
+       if(player1.control == "keys"){
+           player1.move(event.keyCode);
+       }
 });
 
 window.addEventListener("keydown", function(event){
@@ -514,10 +517,20 @@ window.addEventListener("keydown", function(event){
         player2.move(event.keyCode);
 });
 
-
+ 
 //pressing spacebar serves the ball
 window.addEventListener("keypress", function(event){
-    if(event.keyCode == 32){
+    if(event.keyCode == 32 && !ball.canMove){
+        ball.canMove = true;
+        bgm.play();
+        step();
+        ball.speed = ball.startSpeed;
+    }
+});
+
+//clicking serves the ball
+window.addEventListener("click", function(event){
+    if(table.canBegin && !ball.canMove){
         ball.canMove = true;
         bgm.play();
         step();
@@ -572,6 +585,7 @@ var revealColors = function(){
         player1.control = "mouse";
     }else{
         player1.control = "keys";
+        player1.speed = 40;
     }
 };
 
@@ -611,6 +625,7 @@ var showTable = function(){
     $(".colors").css("display", "none");
     context.font = 'bold 50pt VT323';
     context.fillText("Press SPACE to continue", canvas.width/4 - 23, canvas.height - 400);
+    setTimeout(function(){table.canBegin = true}, 500);
 };
 
 
