@@ -361,7 +361,7 @@ function Ball(x_pos, y_pos){
         context.font = 'bold 50pt VT323';
         context.fillText(String(p1Score), canvas.width/4, 100);
         context.fillText(String(p2Score), canvas.width*3/4, 100);
-        context.fillText("Press SPACE to continue", canvas.width/4 - 20, canvas.height - 400);
+        context.fillText("Click to continue", canvas.width/3 - 40, canvas.height - 400);
         
         if(p1Score > 10 || p2Score > 10){
             this.endGame(scoringPlayer);
@@ -387,7 +387,7 @@ function Ball(x_pos, y_pos){
         
         context.fillText(congrats, canvas.width/3 + spacer, canvas.height/2);
         context.font = 'normal 30pt VT323';
-        context.fillText("Press space to go ahead and run the game back again.", canvas.width/10, canvas.height/2 + 100);
+        context.fillText("Click to go ahead and run the game back again.", canvas.width/10, canvas.height/2 + 100);
         context.fillText("Reload this page to select new game options!", canvas.width/5, canvas.height/2+175);
         
         p1Score = 0;
@@ -518,16 +518,19 @@ window.addEventListener("keydown", function(event){
 });
 
  
-//pressing spacebar serves the ball
+/*pressing spacebar serves the ball IN CHROME. Had to nix this feature due to unreliable keycode recognition in firefox
 window.addEventListener("keypress", function(event){
-    if(event.keyCode == 32 && !ball.canMove){
+    console.log(event.charCode);
+    if(event.keyCode == 13 && !ball.canMove && table.canBegin ){
+        console.log("Space bar pressed");
         ball.canMove = true;
         bgm.play();
         step();
         ball.speed = ball.startSpeed;
+        
     }
 });
-
+*/
 //clicking serves the ball
 window.addEventListener("click", function(event){
     if(table.canBegin && !ball.canMove){
@@ -624,7 +627,7 @@ var showTable = function(){
     $("h1").css("display", "none");
     $(".colors").css("display", "none");
     context.font = 'bold 50pt VT323';
-    context.fillText("Press SPACE to continue", canvas.width/4 - 23, canvas.height - 400);
+    context.fillText("Click to continue", canvas.width/3 - 40, canvas.height - 400);
     setTimeout(function(){table.canBegin = true}, 500);
 };
 
