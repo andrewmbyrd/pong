@@ -22,7 +22,7 @@ body{
 
 .controls p{
    width: 50%;
-   margin: 30px auto;
+   margin: 3vh auto;
 }
 
 .difficulty{
@@ -97,7 +97,7 @@ td{
 }
 td div{
     width: 30%;
-    height: 20px;
+    height: 2vh;
     margin: 9px auto;
 }
 
@@ -116,11 +116,11 @@ td div{
 }
 
 .begin{
-    width: 300px;
+    width: 15vw;
     border: 1px solid black;
     border-radius: 20px;
     vertical-align: middle;
-    margin: 300px auto 10px auto;
+    margin: 10vh auto 10px auto;
     color: aliceblue;
     background-color: black;
     display: none;

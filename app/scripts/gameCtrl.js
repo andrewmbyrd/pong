@@ -1,5 +1,7 @@
 //get the canvas and context objects to be used throughout the project
 var canvas = document.getElementById("table");
+canvas.style.width = "53vw";
+canvas.style.height = "95vh"
 var context = canvas.getContext("2d");
 
 //store global hit and score variables
